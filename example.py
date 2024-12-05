@@ -1,7 +1,6 @@
 import pygame
 import random
 import time
-
 colors = [
     (4,65,174),
     (114,203,59),
