@@ -188,7 +188,7 @@ while not done:
             if event.key == pygame.K_DOWN:
                 pressing_down = False
 
-    screen.fill(BLACK)
+    screen.fill(WHITE)
 
     for i in range(game.height):
         for j in range(game.width):
@@ -207,16 +207,19 @@ while not done:
                                       game.y + game.zoom * (i + game.figure.y) + 1,
                                       game.zoom - 2, game.zoom - 2])
 
-    font = pygame.font.SysFont('Calibri', 25, True, False)
-    font1 = pygame.font.SysFont('Calibri', 65, True, False)
-    text = font.render("Score: " + str(game.score), True, WHITE)
-    text_game_over = font1.render("Game Over", True, (255, 125, 0))
-    text_game_over1 = font1.render("Press ESC", True, (255, 215, 0))
+    font = pygame.font.SysFont('Old Standard', 35, True, False)
+    font1 = pygame.font.SysFont('Old Standard', 30, True, False)
+    font2 = pygame.font.SysFont('Old Standard', 30, True, False)
+    text = font.render("Score: " + str(game.score), True, BLACK)
+    text_game_over = font1.render("Game Over", True, BLACK)
+    text_game_over1 = font1.render("Press ESC ", True, BLACK)
+    text_game_over2 = font2.render("to play again", True, BLACK)
 
     screen.blit(text, [0, 0])
     if game.state == "gameover":
-        screen.blit(text_game_over, [20, 200])
-        screen.blit(text_game_over1, [25, 265])
+        screen.blit(text_game_over, [60, 20])
+        screen.blit(text_game_over1, [15, 265])
+        screen.blit(text_game_over2, [15, 300])
 
     pygame.display.flip()
     clock.tick(fps)
