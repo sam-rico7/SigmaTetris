@@ -3,13 +3,13 @@ import random
 import time
 
 colors = [
-    (0, 0, 0),
-    (120, 37, 179),
-    (100, 179, 179),
-    (80, 34, 22),
-    (80, 134, 22),
-    (180, 34, 22),
-    (180, 34, 122),
+    (4,65,174),
+    (114,203,59),
+    (255,213,4),
+    (255,151,29),
+    (255,50,21),
+    (0,166,255),
+    (99,20,91),
 ]
 
 
@@ -130,7 +130,7 @@ class Tetris:
         if self.intersects():
             self.figure.rotation = old_rotation
 
-
+#start here tommorow
 # Initialize the game engine
 pygame.init()
 
