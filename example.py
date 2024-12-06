@@ -141,13 +141,13 @@ GRAY = (0, 81, 105)
 size = (400, 500)
 screen = pygame.display.set_mode(size)
 
-pygame.display.set_caption("Tetris")
+pygame.display.set_caption("I Love Gingers!")
 
 # Loop until the user clicks the close button.
 done = False
 clock = pygame.time.Clock()
-fps = 25
-game = Tetris(20, 10)
+fps = 30
+game = Tetris(18, 10)
 counter = 0
 
 pressing_down = False
