@@ -51,6 +51,7 @@ class Tetris:
         self.y = 60
         self.zoom = 20
         self.figure = None
+        self.next_figure = Figure(3, 0)
     
         self.height = height
         self.width = width
@@ -64,7 +65,12 @@ class Tetris:
             self.field.append(new_line)
 
     def new_figure(self):
-        self.figure = Figure(3, 0)
+        if self.next_figure is None:
+            self.next_figure = Figure(3, 0)
+        self.figure = self.next_figure
+        self.next_figure = Figure(3, 0)
+    def get_next_figure(self):
+        return self.next_figure
 
     def intersects(self):
         intersection = False
@@ -105,8 +111,6 @@ class Tetris:
             self.freeze()
 
     def freeze(self):
-        if event.key != pygame.K_SPACE:
-            time.sleep(0.8)
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in self.figure.image():
@@ -152,6 +156,7 @@ while not done:
     if game.figure is None:
         game.new_figure()
     counter += 1
+    
     if counter > 100000:
         counter = 0
 
@@ -202,16 +207,29 @@ while not done:
                                       game.y + game.zoom * (i + game.figure.y) + 1,
                                       game.zoom - 2, game.zoom - 2])
                     
+    next_figure = game.get_next_figure()
+    for i in range(4):
+        for j in range(4):
+            p = i * 4 + j
+            if p in game.next_figure.image():
+                pygame.draw.rect(screen, colors[next_figure.color],
+                                 [game.x + game.zoom * (j + 10.59) + 1,
+                                  game.y + game.zoom * (i + 2) + 1,
+                                  game.zoom - 2, game.zoom - 2])
+                    
     font = pygame.font.SysFont('Retro', 25, True, False)
     font1 = pygame.font.SysFont('Retro', 65, True, False)
     text = font.render("Score: " + str(game.score), True, BLACK)
     text_game_over = font1.render("Game Over", True, BLACK)
     text_game_over1 = font1.render("Press ESC", True, BLACK)
+    text_game_next = font.render("Next", True, BLACK)
 
     screen.blit(text, [0, 0])
+    screen.blit(text_game_next, [335, 50])
     if game.state == "gameover":
         screen.blit(text_game_over, [70, 20])
         screen.blit(text_game_over1, [80, 420])
+        
 
     pygame.display.flip()
     clock.tick(fps)
