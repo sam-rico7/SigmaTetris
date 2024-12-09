@@ -211,7 +211,7 @@ while not done:
     screen.blit(text, [0, 0])
     if game.state == "gameover":
         screen.blit(text_game_over, [70, 20])
-        screen.blit(text_game_over1, [70, 250])
+        screen.blit(text_game_over1, [80, 420])
 
     pygame.display.flip()
     clock.tick(fps)

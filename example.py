@@ -136,18 +136,18 @@ pygame.init()
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-GRAY = (0, 81, 105)
+GRAY = (0, 0, 0)
 
 size = (400, 500)
 screen = pygame.display.set_mode(size)
 
-pygame.display.set_caption("I Love Gingers!")
+pygame.display.set_caption("Tetris")
 
 # Loop until the user clicks the close button.
 done = False
 clock = pygame.time.Clock()
-fps = 30
-game = Tetris(18, 10)
+fps = 25
+game = Tetris(20, 10)
 counter = 0
 
 pressing_down = False
@@ -207,19 +207,16 @@ while not done:
                                       game.y + game.zoom * (i + game.figure.y) + 1,
                                       game.zoom - 2, game.zoom - 2])
 
-    font = pygame.font.SysFont('Old Standard', 35, True, False)
-    font1 = pygame.font.SysFont('Old Standard', 30, True, False)
-    font2 = pygame.font.SysFont('Old Standard', 30, True, False)
+    font = pygame.font.SysFont('Calibri', 25, True, False)
+    font1 = pygame.font.SysFont('Calibri', 65, True, False)
     text = font.render("Score: " + str(game.score), True, BLACK)
     text_game_over = font1.render("Game Over", True, BLACK)
-    text_game_over1 = font1.render("Press ESC ", True, BLACK)
-    text_game_over2 = font2.render("to play again", True, BLACK)
+    text_game_over1 = font1.render("Press ESC", True, BLACK)
 
     screen.blit(text, [0, 0])
     if game.state == "gameover":
-        screen.blit(text_game_over, [60, 20])
-        screen.blit(text_game_over1, [15, 265])
-        screen.blit(text_game_over2, [15, 300])
+        screen.blit(text_game_over, [20, 200])
+        screen.blit(text_game_over1, [25, 265])
 
     pygame.display.flip()
     clock.tick(fps)
