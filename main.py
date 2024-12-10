@@ -52,6 +52,7 @@ class Tetris:
         self.zoom = 20
         self.figure = None
         self.next_figure = Figure(3, 0)
+        self.high_score = self.load_high_score()
     
         self.height = height
         self.width = width
@@ -63,6 +64,20 @@ class Tetris:
             for j in range(width):
                 new_line.append(0)
             self.field.append(new_line)
+
+    
+
+    def load_high_score(self):  
+        try:
+            with open("highscore.txt", "r") as file:
+                content = file.read().strip()  
+                return int(content) if content else 0
+        except FileNotFoundError:
+            return 0
+    
+    def save_high_score(self):
+        with open("highscore.txt", "w") as file:
+            file.write(str(self.high_score))
 
     def new_figure(self):
         if self.next_figure is None:
@@ -118,6 +133,9 @@ class Tetris:
         self.break_lines()
         self.new_figure()
         if self.intersects():
+            if self.score > self.high_score:  
+                self.high_score = self.score
+                self.save_high_score()
             self.state = "gameover"
 
     def go_side(self, dx):
@@ -223,9 +241,11 @@ while not done:
     text_game_over = font1.render("Game Over", True, BLACK)
     text_game_over1 = font1.render("Press ESC", True, BLACK)
     text_game_next = font.render("Next", True, BLACK)
+    text_high_score = font.render("High Score: " + str(game.high_score), True, BLACK)
 
     screen.blit(text, [0, 0])
     screen.blit(text_game_next, [335, 50])
+    screen.blit(text_high_score, [0, 30])
     if game.state == "gameover":
         screen.blit(text_game_over, [70, 20])
         screen.blit(text_game_over1, [80, 420])
@@ -235,3 +255,4 @@ while not done:
     clock.tick(fps)
 
 pygame.quit()
+print(f"High Score: {game.high_score}")
