@@ -49,7 +49,7 @@ class Tetris:
         self.width = 0
         self.x = 100
         self.y = 60
-        self.zoom = 20
+        self.zoom = 40
         self.figure = None
         self.next_figure = Figure(3, 0)
         self.high_score = self.load_high_score()
@@ -160,7 +160,7 @@ NEON_GREEN = (0, 255, 0)
 NEON_PINK = (255, 0, 255)
 NEON_BLUE = (0, 0, 255)
 
-size = (400,500)
+size = (800,1000)
 screen = pygame.display.set_mode(size)
 
 done = False
@@ -214,14 +214,14 @@ while not done:
     screen.fill(BLACK)
 
 
-    pygame.draw.rect(screen, NEON_BLUE, [game.x - 5, game.y - 5, game.zoom * game.width + 10, game.zoom * game.height + 10], 5)
+    pygame.draw.rect(screen, NEON_BLUE, [game.x - 10, game.y - 10, game.zoom * game.width + 20, game.zoom * game.height + 20], 10)
 
     for i in range(game.height):
         for j in range(game.width):
-            pygame.draw.rect(screen, GRAY, [game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom], 1)
+            pygame.draw.rect(screen, GRAY, [game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom], 2)
             if game.field[i][j] > 0:
                 pygame.draw.rect(screen, colors[game.field[i][j]],
-                                 [game.x + game.zoom * j + 1, game.y + game.zoom * i + 1, game.zoom - 2, game.zoom - 2])
+                                 [game.x + game.zoom * j + 2, game.y + game.zoom * i + 2, game.zoom - 4, game.zoom - 4])
 
     if game.figure is not None:
         for i in range(4):
@@ -229,9 +229,9 @@ while not done:
                 p = i * 4 + j
                 if p in game.figure.image():
                     pygame.draw.rect(screen, colors[game.figure.color],
-                                     [game.x + game.zoom * (j + game.figure.x) + 1,
-                                      game.y + game.zoom * (i + game.figure.y) + 1,
-                                      game.zoom - 2, game.zoom - 2])
+                                     [game.x + game.zoom * (j + game.figure.x) + 2,
+                                      game.y + game.zoom * (i + game.figure.y) + 2,
+                                      game.zoom - 4, game.zoom - 4])
 
     next_figure = game.get_next_figure()
     for i in range(4):
@@ -239,9 +239,9 @@ while not done:
             p = i * 4 + j
             if p in game.next_figure.image():
                 pygame.draw.rect(screen, colors[next_figure.color],
-                                 [game.x + game.zoom * (j + 10.594) + 1,
-                                  game.y + game.zoom * (i + 2) + 1,
-                                  game.zoom - 2, game.zoom - 2])
+                                 [game.x + game.zoom * (j + 21.188) + 2,
+                                  game.y + game.zoom * (i + 4) + 2,
+                                  game.zoom - 4, game.zoom - 4])
 
     text_score = retro_font_small.render(f"Score: {game.score}", True, NEON_GREEN)
     text_high_score = retro_font_small.render(f"High Score: {game.high_score}", True, NEON_PINK)
@@ -249,12 +249,12 @@ while not done:
     text_press_esc = retro_font_small.render("Press ESC to Restart", True, NEON_BLUE)
     text_next = retro_font_small.render("Next", True, NEON_GREEN)
 
-    screen.blit(text_score, [10, 10])
-    screen.blit(text_high_score, [10, 40])
-    screen.blit(text_next, [335, 50])
+    screen.blit(text_score, [20, 20])
+    screen.blit(text_high_score, [20, 80])
+    screen.blit(text_next, [670, 100])
     if game.state == "gameover":
-        screen.blit(text_game_over, [35, 200])
-        screen.blit(text_press_esc, [40, 400])
+        screen.blit(text_game_over, [70, 400])
+        screen.blit(text_press_esc, [80, 800])
 
     pygame.display.flip()
     clock.tick(fps)
