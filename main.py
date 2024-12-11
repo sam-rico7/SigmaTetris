@@ -1,21 +1,19 @@
 import pygame
 import random
-import time
 
 colors = [
-    (4,65,174),
-    (114,203,59),
-    (255,213,4),
-    (255,151,29),
-    (255,50,21),
-    (0,166,255),
-    (99,20,91)
+    (0, 128, 255), 
+    (0, 255, 0),   
+    (255, 255, 0), 
+    (255, 102, 0), 
+    (255, 0, 0),
+    (0, 255, 255),
+    (255, 0, 255),
 ]
 
 class Figure:
     x = 0
     y = 0
-
     figures = [
         [[1, 5, 9, 13], [4, 5, 6, 7]],
         [[4, 5, 9, 10], [2, 6, 5, 9]],
@@ -47,34 +45,32 @@ class Tetris:
         self.field = []
         self.height = 0
         self.width = 0
-        self.x = 100
-        self.y = 60
         self.zoom = 40
         self.figure = None
         self.next_figure = Figure(3, 0)
         self.high_score = self.load_high_score()
-    
         self.height = height
         self.width = width
         self.field = []
         self.score = 0
         self.state = "start"
+        screen_width, screen_height = pygame.display.get_surface().get_size()
+        self.x = (screen_width - self.width * self.zoom) // 2
+        self.y = (screen_height - self.height * self.zoom) // 2
         for i in range(height):
             new_line = []
             for j in range(width):
                 new_line.append(0)
             self.field.append(new_line)
 
-    
-
-    def load_high_score(self):  
+    def load_high_score(self):
         try:
             with open("highscore.txt", "r") as file:
-                content = file.read().strip()  
+                content = file.read().strip()
                 return int(content) if content else 0
         except FileNotFoundError:
             return 0
-    
+
     def save_high_score(self):
         with open("highscore.txt", "w") as file:
             file.write(str(self.high_score))
@@ -84,6 +80,7 @@ class Tetris:
             self.next_figure = Figure(3, 0)
         self.figure = self.next_figure
         self.next_figure = Figure(3, 0)
+
     def get_next_figure(self):
         return self.next_figure
 
@@ -92,12 +89,17 @@ class Tetris:
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in self.figure.image():
-                    if i + self.figure.y > self.height - 1 or \
-                            j + self.figure.x > self.width - 1 or \
-                            j + self.figure.x < 0 or \
-                            self.field[i + self.figure.y][j + self.figure.x] > 0:
+                    if (
+                        i + self.figure.y > self.height - 1
+                        or j + self.figure.x > self.width - 1
+                        or j + self.figure.x < 0
+                        or self.field[i + self.figure.y][j + self.figure.x] > 0
+                    ):
                         intersection = True
         return intersection
+
+    def reset(self):
+        self.__init__(self.height, self.width)
 
     def break_lines(self):
         lines = 0
@@ -133,7 +135,7 @@ class Tetris:
         self.break_lines()
         self.new_figure()
         if self.intersects():
-            if self.score > self.high_score:  
+            if self.score > self.high_score:
                 self.high_score = self.score
                 self.save_high_score()
             self.state = "gameover"
@@ -154,26 +156,25 @@ class Tetris:
 pygame.init()
 
 BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
 GRAY = (0, 81, 105)
 NEON_GREEN = (0, 255, 0)
 NEON_PINK = (255, 0, 255)
 NEON_BLUE = (0, 0, 255)
 
-size = (800,1000)
+size = (800, 1000)
 screen = pygame.display.set_mode(size)
 
 done = False
 clock = pygame.time.Clock()
 fps = 30
-game = Tetris(18,10)
+game = Tetris(18, 10)
 counter = 0
 
 pygame.display.set_caption("Tetris")
 
 pressing_down = False
-retro_font_large = pygame.font.Font(pygame.font.match_font('Retro'), 65)
-retro_font_small = pygame.font.Font(pygame.font.match_font('Retro'), 25)
+retro_font_large = pygame.font.Font(pygame.font.match_font("Retro"), 130)
+retro_font_small = pygame.font.Font(pygame.font.match_font("Retro"), 50)
 
 while not done:
     if game.figure is None:
@@ -183,7 +184,7 @@ while not done:
     if counter > 100000:
         counter = 0
 
-    if counter % (fps // game.level // 2) == 0 or pressing_down:
+    if counter % (fps // game.level // 1.9) == 0 or pressing_down:
         if game.state == "start":
             game.go_down()
     for event in pygame.event.get():
@@ -206,55 +207,79 @@ while not done:
                 game.go_space()
                 pressing_down = False
             if event.key == pygame.K_ESCAPE:
-                game.__init__(20, 10)
-    if event.type == pygame.KEYUP:
-        if event.key == pygame.K_DOWN:
-            pressing_down = False
+                game.reset()
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_DOWN:
+                pressing_down = False
 
     screen.fill(BLACK)
 
-
-    pygame.draw.rect(screen, NEON_BLUE, [game.x - 10, game.y - 10, game.zoom * game.width + 20, game.zoom * game.height + 20], 10)
+    pygame.draw.rect(
+        screen,
+        NEON_BLUE,
+        [game.x - 10, game.y - 10, game.zoom * game.width + 20, game.zoom * game.height + 20],
+        10,
+    )
 
     for i in range(game.height):
         for j in range(game.width):
-            pygame.draw.rect(screen, GRAY, [game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom], 2)
+            pygame.draw.rect(
+                screen,
+                GRAY,
+                [game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom],
+                2,
+            )
             if game.field[i][j] > 0:
-                pygame.draw.rect(screen, colors[game.field[i][j]],
-                                 [game.x + game.zoom * j + 2, game.y + game.zoom * i + 2, game.zoom - 4, game.zoom - 4])
+                pygame.draw.rect(
+                    screen,
+                    colors[game.field[i][j]],
+                    [game.x + game.zoom * j + 2, game.y + game.zoom * i + 2, game.zoom - 4, game.zoom - 4],
+                )
 
     if game.figure is not None:
         for i in range(4):
             for j in range(4):
                 p = i * 4 + j
                 if p in game.figure.image():
-                    pygame.draw.rect(screen, colors[game.figure.color],
-                                     [game.x + game.zoom * (j + game.figure.x) + 2,
-                                      game.y + game.zoom * (i + game.figure.y) + 2,
-                                      game.zoom - 4, game.zoom - 4])
+                    pygame.draw.rect(
+                        screen,
+                        colors[game.figure.color],
+                        [
+                            game.x + game.zoom * (j + game.figure.x) + 2,
+                            game.y + game.zoom * (i + game.figure.y) + 2,
+                            game.zoom - 4,
+                            game.zoom - 4,
+                        ],
+                    )
 
     next_figure = game.get_next_figure()
     for i in range(4):
         for j in range(4):
             p = i * 4 + j
-            if p in game.next_figure.image():
-                pygame.draw.rect(screen, colors[next_figure.color],
-                                 [game.x + game.zoom * (j + 21.188) + 2,
-                                  game.y + game.zoom * (i + 4) + 2,
-                                  game.zoom - 4, game.zoom - 4])
+            if p in next_figure.image():
+                pygame.draw.rect(
+                    screen,
+                    colors[next_figure.color],
+                    [
+                        game.x + game.zoom * (j + 10.5) + 2,
+                        game.y + game.zoom * (i + 1) + 2, 
+                        game.zoom - 4,
+                        game.zoom - 4,
+                    ],
+                )
 
     text_score = retro_font_small.render(f"Score: {game.score}", True, NEON_GREEN)
     text_high_score = retro_font_small.render(f"High Score: {game.high_score}", True, NEON_PINK)
-    text_game_over = retro_font_large.render("GAME OVER", True, NEON_PINK)
+    text_game_over = retro_font_large.render("GAME OVER", True, (200, 0, 200))
     text_press_esc = retro_font_small.render("Press ESC to Restart", True, NEON_BLUE)
     text_next = retro_font_small.render("Next", True, NEON_GREEN)
 
     screen.blit(text_score, [20, 20])
     screen.blit(text_high_score, [20, 80])
-    screen.blit(text_next, [670, 100])
+    screen.blit(text_next, [660, 80])
     if game.state == "gameover":
-        screen.blit(text_game_over, [70, 400])
-        screen.blit(text_press_esc, [80, 800])
+        screen.blit(text_game_over, [150, 400])
+        screen.blit(text_press_esc, [245, 900])
 
     pygame.display.flip()
     clock.tick(fps)
