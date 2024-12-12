@@ -176,6 +176,13 @@ pressing_down = False
 retro_font_large = pygame.font.Font(pygame.font.match_font("Retro"), 130)
 retro_font_small = pygame.font.Font(pygame.font.match_font("Retro"), 50)
 
+move_timer = 0
+move_delay = 3
+moving_left = False
+moving_right = False
+speed_mutilplier = 1
+max_speed = 5
+
 while not done:
     if game.figure is None:
         game.new_figure()
@@ -187,6 +194,7 @@ while not done:
     if counter % (fps // game.level // 1.5) == 0 or pressing_down:
         if game.state == "start":
             game.go_down()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
@@ -195,23 +203,49 @@ while not done:
             if event.key == pygame.K_UP:
                 game.rotate()
                 pressing_down = False
+
             if event.key == pygame.K_DOWN:
                 pressing_down = True
+
             if event.key == pygame.K_LEFT:
-                game.go_side(-1)
-                pressing_down = False
+                moving_left = True
+        
             if event.key == pygame.K_RIGHT:
-                game.go_side(1)
-                pressing_down = False
+                moving_right = True
+
+                
             if event.key == pygame.K_SPACE:
                 game.go_space()
                 pressing_down = False
+
             if event.key == pygame.K_ESCAPE:
                 game.reset()
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_DOWN:
                 pressing_down = False
+            if event.key == pygame.K_LEFT:
+                moving_left = False
+            if event.key == pygame.K_RIGHT:
+                moving_right = False
 
+    if moving_left:
+        speed_mutilplier += 0.01
+    if moving_right:
+        speed_mutilplier += 0.01
+
+    speed_mutilplier = min(speed_mutilplier, max_speed)
+    move_delay = max(1, int(15/speed_mutilplier))
+
+    if moving_left and move_timer == 0:
+        game.go_side(-1)
+        move_timer = move_delay
+    if moving_right and move_timer == 0:
+        game.go_side(1)
+        move_timer = move_delay
+
+    if move_timer > 0:
+        move_timer -= 1
     screen.fill(BLACK)
 
     pygame.draw.rect(
