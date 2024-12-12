@@ -184,7 +184,7 @@ while not done:
     if counter > 100000:
         counter = 0
 
-    if counter % (fps // game.level // 1.9) == 0 or pressing_down:
+    if counter % (fps // game.level // 1.5) == 0 or pressing_down:
         if game.state == "start":
             game.go_down()
     for event in pygame.event.get():
