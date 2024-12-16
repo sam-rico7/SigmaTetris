@@ -2,12 +2,12 @@ import pygame
 import random
 
 colors = [
-    (0, 128, 255),  # Cyan
+    (0, 128, 255),  # Blue
     (0, 255, 0),    # Green
     (255, 255, 0),  # Yellow
     (255, 102, 0),  # Orange
     (255, 0, 0),    # Red
-    (0, 255, 255),  # Aqua
+    (0, 255, 255),  # Cyan
     (255, 0, 255),  # Magenta
 ]
 
@@ -15,13 +15,13 @@ class Figure:
     x = 0
     y = 0
     figures = [
-        [[1, 5, 9, 13], [4, 5, 6, 7]], 
-        [[4, 5, 9, 10], [2, 6, 5, 9]], 
-        [[6, 7, 9, 10], [1, 5, 6, 10]], 
-        [[1, 2, 5, 9], [0, 4, 5, 6], [1, 5, 9, 8], [4, 5, 6, 10]], 
-        [[1, 2, 6, 10], [5, 6, 7, 9], [2, 6, 10, 11], [3, 5, 6, 7]], 
-        [[1, 4, 5, 6], [1, 4, 5, 9], [4, 5, 6, 9], [1, 5, 6, 9]], 
-        [[1, 2, 5, 6]], 
+        [[1, 5, 9, 13], [4, 5, 6, 7]],  # T
+        [[4, 5, 9, 10], [2, 6, 5, 9]],  # Z
+        [[6, 7, 9, 10], [1, 5, 6, 10]],  # S
+        [[1, 2, 5, 9], [0, 4, 5, 6], [1, 5, 9, 8], [4, 5, 6, 10]],  # L
+        [[1, 2, 6, 10], [5, 6, 7, 9], [2, 6, 10, 11], [3, 5, 6, 7]],  # J
+        [[1, 4, 5, 6], [1, 4, 5, 9], [4, 5, 6, 9], [1, 5, 6, 9]],  # T
+        [[1, 2, 5, 6]],  # O
     ]
 
     def __init__(self, x, y):
@@ -176,13 +176,25 @@ pressing_down = False
 retro_font_large = pygame.font.Font(pygame.font.match_font("Retro"), 130)
 retro_font_small = pygame.font.Font(pygame.font.match_font("Retro"), 50)
 
-# Global variables for movement and speed multiplier
-move_timer = 0  # Timer to control movement speed
-move_delay = 3  # Delay between each move (higher value = slower movement)
+move_timer = 0
+move_delay = 3
 moving_left = False
 moving_right = False
-speed_multiplier = 1  # Initial multiplier
-max_speed = 5  # The maximum speed (minimum delay)
+
+# Initialize speed multiplier and max speed
+speed_multiplier = 1.0
+max_speed_multiplier = 1.5  # Cap the speed increase
+
+# Function to increase speed gradually
+def speed_up():
+    global speed_multiplier
+    if game.level % 5 == 0 and speed_multiplier < max_speed_multiplier:
+        speed_multiplier += 0.05  # Increase by 0.05 every 5 levels
+
+# Adjust the game speed based on the speed multiplier
+def update_move_delay():
+    global move_delay
+    move_delay = max(1, int(15 / speed_multiplier))  # Adjust delay based on multiplier
 
 while not done:
     if game.figure is None:
@@ -192,10 +204,13 @@ while not done:
     if counter > 100000:
         counter = 0
 
+    # Update move delay based on speed multiplier
+    update_move_delay()
+
     if counter % (fps // game.level // 1.5) == 0 or pressing_down:
         if game.state == "start":
             game.go_down()
-    
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
@@ -203,49 +218,49 @@ while not done:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 game.rotate()
+                pressing_down = False
+
             if event.key == pygame.K_DOWN:
                 pressing_down = True
+
             if event.key == pygame.K_LEFT:
-                moving_left = True  # Start moving left
+                moving_left = True
+        
             if event.key == pygame.K_RIGHT:
-                moving_right = True  # Start moving right
+                moving_right = True
+
             if event.key == pygame.K_SPACE:
                 game.go_space()
+                pressing_down = False
+
             if event.key == pygame.K_ESCAPE:
                 game.reset()
-                
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_DOWN:
                 pressing_down = False
             if event.key == pygame.K_LEFT:
-                moving_left = False  # Stop moving left
+                moving_left = False
             if event.key == pygame.K_RIGHT:
-                moving_right = False  # Stop moving right
+                moving_right = False
 
-    # Speed multiplier: Increase the speed the longer you hold the key down
     if moving_left:
-        speed_multiplier += 0.3  # Gradually increase speed
+        speed_multiplier += 0.01
     if moving_right:
-        speed_multiplier += 0.3  # Gradually increase speed
+        speed_multiplier += 0.01
 
-    # Cap the speed multiplier to a max speed
-    speed_multiplier = min(speed_multiplier, max_speed)
+    speed_multiplier = min(speed_multiplier, max_speed_multiplier)
+    move_delay = max(1, int(15/speed_multiplier))
 
-    # Adjust the move_delay based on the speed multiplier
-    move_delay = max(1, int(15 / speed_multiplier))  # Decrease the delay to speed up the movement
-
-    # Slower movement for left and right arrows
     if moving_left and move_timer == 0:
-        game.go_side(-1)  # Move left by 1 space
-        move_timer = move_delay  # Reset the timer
+        game.go_side(-1)
+        move_timer = move_delay
     if moving_right and move_timer == 0:
-        game.go_side(1)  # Move right by 1 space
-        move_timer = move_delay  # Reset the timer
+        game.go_side(1)
+        move_timer = move_delay
 
     if move_timer > 0:
-        move_timer -= 1  # Decrease the timer each frame
-
-    # Drawing the screen
+        move_timer -= 1
     screen.fill(BLACK)
 
     pygame.draw.rect(
