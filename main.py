@@ -2,10 +2,10 @@ import pygame
 import random
 
 colors = [
-    (0, 128, 255),
-    (0, 255, 0),
-    (255, 255, 0),
-    (255, 102, 0),
+    (0, 128, 255), 
+    (0, 255, 0),   
+    (255, 255, 0), 
+    (255, 102, 0), 
     (255, 0, 0),
     (0, 255, 255),
     (255, 0, 255),
@@ -115,14 +115,6 @@ class Tetris:
                         self.field[i1][j] = self.field[i1 - 1][j]
         self.score += lines ** 2
 
-        if self.score // 10 > (self.score - lines ** 2) // 10:
-            self.level += 1
-            self.update_speed()
-    
-    def update_speed(self):
-        self.move_delay = max(1, 15 - self.level)
-        self.speed_multiplier = min(self.level / 4, max_speed)
-
     def go_space(self):
         while not self.intersects():
             self.figure.y += 1
@@ -188,7 +180,7 @@ move_timer = 0
 move_delay = 3
 moving_left = False
 moving_right = False
-speed_multiplier = 1
+speed_mutilplier = 1
 max_speed = 5
 
 while not done:
@@ -209,7 +201,7 @@ while not done:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                game.figure.rotate()
+                game.rotate()
                 pressing_down = False
 
             if event.key == pygame.K_DOWN:
@@ -217,10 +209,11 @@ while not done:
 
             if event.key == pygame.K_LEFT:
                 moving_left = True
-
+        
             if event.key == pygame.K_RIGHT:
                 moving_right = True
 
+                
             if event.key == pygame.K_SPACE:
                 game.go_space()
                 pressing_down = False
@@ -237,12 +230,12 @@ while not done:
                 moving_right = False
 
     if moving_left:
-        speed_multiplier += 0.01
+        speed_mutilplier += 0.01
     if moving_right:
-        speed_multiplier += 0.01
+        speed_mutilplier += 0.01
 
-    speed_multiplier = min(speed_multiplier, max_speed)
-    move_delay = max(1, int(15/speed_multiplier))
+    speed_mutilplier = min(speed_mutilplier, max_speed)
+    move_delay = max(1, int(15/speed_mutilplier))
 
     if moving_left and move_timer == 0:
         game.go_side(-1)
@@ -303,7 +296,7 @@ while not done:
                     colors[next_figure.color],
                     [
                         game.x + game.zoom * (j + 10.5) + 2,
-                        game.y + game.zoom * (i + 1) + 2,
+                        game.y + game.zoom * (i + 1) + 2, 
                         game.zoom - 4,
                         game.zoom - 4,
                     ],
